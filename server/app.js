@@ -4,7 +4,7 @@ import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import { v4 as uuidv4 } from 'uuid';
-import { router } from './routes/games';
+import { GameRouter } from './routes';
 import cors from 'cors';
 
 const env = process.env.NODE_ENV;
@@ -30,7 +30,7 @@ app.use(
 );
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use('/api/v1/games', router);
+app.use('/api/v1/games', GameRouter);
 app.use(function (req, res, next) {
   // catch 404 and forward to error handler
   next(createError(404));

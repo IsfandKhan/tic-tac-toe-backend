@@ -1,5 +1,5 @@
 import { v4 } from 'uuid';
-import { checkStatus, placeMove } from '../utils/tictactoe-ai';
+import { checkStatus, placeMove } from '../utils';
 
 const STATUS = Object.freeze({
   running: 'RUNNING',
