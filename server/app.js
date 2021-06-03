@@ -1,9 +1,7 @@
 import createError from 'http-errors';
 import express from 'express';
-import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
-import { v4 as uuidv4 } from 'uuid';
 import { GameRouter } from './routes';
 import cors from 'cors';
 
@@ -20,14 +18,6 @@ app.use(
 );
 app.use(logger('dev'));
 app.use(express.json());
-app.use(
-  session({
-    genid: (req) => uuidv4(),
-    secret: 'yes',
-    resave: false,
-    saveUninitialized: false
-  })
-);
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use('/api/v1/games', GameRouter);
