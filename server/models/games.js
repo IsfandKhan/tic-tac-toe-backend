@@ -9,15 +9,14 @@ const STATUS = Object.freeze({
 });
 
 export const GamesModel = () => {
-  const games = [];
   return {
-    getAll: () => games,
-    getOne: (id) => games.find((game) => game.id === id) || null,
-    deleteOne: (id) => {
+    getAll: (games) => games,
+    getOne: (games, id) => games.find((game) => game.id === id) || null,
+    deleteOne: (games, id) => {
       const index = games.findIndex((game) => game.id === id);
       games.splice(index, 1);
     },
-    create: (board) => {
+    create: (games, board) => {
       const game = {
         id: v4(),
         board,
@@ -26,7 +25,7 @@ export const GamesModel = () => {
       games.push(game);
       return game;
     },
-    updateOne: (id, board) => {
+    updateOne: (games, id, board) => {
       const game = games.find((game) => game.id === id);
 
       if (!game) {

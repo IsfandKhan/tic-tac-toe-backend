@@ -1,4 +1,4 @@
-const tictactoe = require('tictactoe-minimax-ai');
+import tictactoe from 'tictactoe-minimax-ai';
 import { replaceAt } from './utility-functions';
 
 const options = {

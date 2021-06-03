@@ -9,10 +9,12 @@ import {
   replaceAt
 } from '../utils';
 
-const gameModel = GamesModel();
+const gamesModel = GamesModel();
 
-export const getAllGames = (_req, res) =>
-  sendResponse(res, 200, gameModel.getAll());
+export const getAllGames = (req, res) => {
+  const { games } = req.session;
+  return sendResponse(res, 200, gamesModel.getAll(games));
+};
 
 export const createGame = (req, res) => {
   const errors = validationResult(req);
@@ -20,20 +22,23 @@ export const createGame = (req, res) => {
     return response400(res, 'board has ' + errors.array()[0].msg);
   }
 
+  const { games } = req.session;
   const { board } = req.body;
-  const game = gameModel.create(board);
+
+  const game = gamesModel.create(games, board);
 
   return sendResponse(res, 201, { location: `/${game.id}` });
 };
 
 export const getGame = (req, res) => {
-  const id = req.params.id;
+  const { games } = req.session;
+  const { id } = req.params;
 
   if (!isUUID(id)) {
     return response400(res, 'Invalid Game URL');
   }
 
-  const game = gameModel.getOne(id);
+  const game = gamesModel.getOne(games, id);
 
   if (!game) {
     return res.status(404).json({
@@ -47,20 +52,22 @@ export const getGame = (req, res) => {
 export const updateGame = (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return response400(res, 'board has ' + errors.array()[0].msg);
+    return response400(res, errors.array());
   }
 
-  const id = req.params.id;
+  const { games } = req.session;
+  const { id } = req.params;
+
   let { board, index } = req.body;
 
   if (!isUUID(id)) {
     return response400(res, 'Invalid Game URL');
   }
 
-  const savedGame = gameModel.getOne(id);
+  const savedGame = gamesModel.getOne(games, id);
 
   if (board !== savedGame?.board) {
-    response400(res, 'Invalid board');
+    return response400(res, 'Invalid board');
   }
 
   if (board[index] !== '-') {
@@ -69,7 +76,7 @@ export const updateGame = (req, res) => {
 
   board = replaceAt(board, index, 'X');
 
-  const game = gameModel.updateOne(id, board);
+  const game = gamesModel.updateOne(games, id, board);
 
   if (!game) {
     return response404(res);
@@ -79,8 +86,10 @@ export const updateGame = (req, res) => {
 };
 
 export const deleteGame = (req, res) => {
-  const id = req.params.id;
-  const game = gameModel.getOne(id);
+  const { games } = req.session;
+  const { id } = req.params;
+
+  const game = gamesModel.getOne(games, id);
 
   if (!isUUID(id)) {
     return response400(res, 'Not a valid Game URL');
@@ -90,23 +99,6 @@ export const deleteGame = (req, res) => {
     return response404(res);
   }
 
-  gameModel.deleteOne(id);
+  gamesModel.deleteOne(games, id);
   sendResponse(res, 200, { message: 'Game successfully deleted' });
-};
-
-export const checkMoveValidity = (req, res) => {
-  const board = req.query.board;
-  const index = req.query.index;
-  const id = req.params.id;
-
-  const game = gameModel.getOne(id);
-  if (game?.board !== board) {
-    response400(res, 'Invalid board');
-  }
-
-  if (board[index] !== '-') {
-    return response400(res, 'Invalid move');
-  }
-
-  return sendResponse(res, 200, { moveValidity: true });
 };
