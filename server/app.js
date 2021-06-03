@@ -5,9 +5,19 @@ import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import { v4 as uuidv4 } from 'uuid';
 import { router } from './routes/games';
+import cors from 'cors';
 
+const env = process.env.NODE_ENV;
 const app = express();
 
+app.use(
+  cors({
+    origin: env === 'production' ? 'https://ttt-client.herokuapp.com' : '',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    preflightContinue: false,
+    optionsSuccessStatus: 204
+  })
+);
 app.use(logger('dev'));
 app.use(express.json());
 app.use(
