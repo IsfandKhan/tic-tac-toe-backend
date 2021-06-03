@@ -23,8 +23,7 @@ app.use(
     secret: v4(),
     resave: false,
     saveUninitialized: true,
-    proxy: true,
-    cookie: { secure: true, maxAge: 3600000 }
+    cookie: { maxAge: 3600000 }
   })
 );
 app.use(logger('dev'));
