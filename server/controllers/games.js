@@ -57,9 +57,9 @@ export const updateGame = (req, res) => {
     return response400(res, 'Invalid Game URL');
   }
 
-  const game = gameModel.getOne(id);
+  const savedGame = gameModel.getOne(id);
 
-  if (board !== game?.board) {
+  if (board !== savedGame?.board) {
     response400(res, 'Invalid board');
   }
 
