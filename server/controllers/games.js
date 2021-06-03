@@ -1,7 +1,13 @@
 import { validationResult } from 'express-validator';
 
 import { GamesModel } from '../models';
-import { isUUID, sendResponse, response400, response404, replaceAt } from '../utils';
+import {
+  isUUID,
+  sendResponse,
+  response400,
+  response404,
+  replaceAt
+} from '../utils';
 
 const gameModel = GamesModel();
 
@@ -51,6 +57,12 @@ export const updateGame = (req, res) => {
     return response400(res, 'Invalid Game URL');
   }
 
+  const game = gameModel.getOne(id);
+
+  if (board !== game?.board) {
+    response400(res, 'Invalid board');
+  }
+
   if (board[index] !== '-') {
     return response400(res, 'Invalid move');
   }
@@ -80,4 +92,21 @@ export const deleteGame = (req, res) => {
 
   gameModel.deleteOne(id);
   sendResponse(res, 200, { message: 'Game successfully deleted' });
+};
+
+export const checkMoveValidity = (req, res) => {
+  const board = req.query.board;
+  const index = req.query.index;
+  const id = req.params.id;
+
+  const game = gameModel.getOne(id);
+  if (game?.board !== board) {
+    response400(res, 'Invalid board');
+  }
+
+  if (board[index] !== '-') {
+    return response400(res, 'Invalid move');
+  }
+
+  return sendResponse(res, 200, { moveValidity: true });
 };
