@@ -18,13 +18,12 @@ app.use(
     optionsSuccessStatus: 204
   })
 );
-app.set('trust proxy', 1)
 app.use(
   session({
     secret: v4(),
     resave: false,
     saveUninitialized: true,
-    cookie: { secure:true, maxAge: 3600000 }
+    cookie: { maxAge: 3600000 }
   })
 );
 app.use(logger('dev'));
